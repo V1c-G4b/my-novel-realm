@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import { EffectCoverflow, Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -11,11 +12,20 @@ import "swiper/css/navigation";
 
 type NovelsSectionProps = {
   novels: Novel[];
+  onSearch: (query: string) => void;
 };
 
-export default function NovelsSection({ novels }: NovelsSectionProps) {
+export default function NovelsSection({
+  novels,
+  onSearch,
+}: NovelsSectionProps) {
+  const [searchQuery, setSearchQuery] = useState("");
   const slidesCount = novels?.length ?? 0;
   const enableLoop = slidesCount >= 3;
+
+  const handleSearch = () => {
+    onSearch(searchQuery);
+  };
 
   return (
     <section className="relative w-full overflow-hidden rounded-2xl bg-gray-900 py-20 text-white sm:py-28">
@@ -42,9 +52,21 @@ export default function NovelsSection({ novels }: NovelsSectionProps) {
             showcase their work, connect with readers, and build their own
             universes.
           </p>
-          <button className="mt-8 rounded-full bg-pink-600 px-8 py-3 font-semibold transition-transform duration-200 hover:bg-pink-700 active:scale-95">
-            Explore Stories
-          </button>
+          <div className="mt-8 flex justify-center lg:justify-start">
+            <input
+              type="text"
+              placeholder="Search for novels..."
+              className="rounded-l-full bg-gray-800 px-4 py-3 text-white focus:outline-none"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button
+              className="rounded-r-full bg-pink-600 px-6 py-3 font-semibold transition-transform duration-200 hover:bg-pink-700 active:scale-95"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
+          </div>
         </div>
 
         <div className="relative h-[450px] w-full">
@@ -78,7 +100,7 @@ export default function NovelsSection({ novels }: NovelsSectionProps) {
                   <SwiperSlide key={novel.id} className="!w-[280px] h-full">
                     <div className="h-full w-full overflow-hidden rounded-xl shadow-2xl transition-transform duration-300 group-hover:scale-105">
                       <img
-                        src={novel.coverImagePath}
+                        src={novel.coverImageBase64}
                         alt={`Capa de ${novel.title}`}
                         className="h-full w-full object-cover"
                       />

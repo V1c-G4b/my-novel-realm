@@ -1,9 +1,8 @@
 "use client";
 
-import { getNovels, Novel } from "@/_lib/api/novelsApi";
+import { getNovels, Novel, searchNovels } from "@/_lib/api/novelsApi";
+import { useEffect, useState } from "react";
 import NovelsSection from "./_components/NovelsSection";
-import { useState } from "react";
-import { useEffect } from "react";
 
 export default function NovelsIndex() {
   const [novels, setNovels] = useState<Novel[]>([]);
@@ -20,9 +19,18 @@ export default function NovelsIndex() {
     fetchNovels();
   }, []);
 
+  const handleSearch = async (query: string) => {
+    try {
+      const data = await searchNovels(query);
+      setNovels(data.novels);
+    } catch (error) {
+      console.error("Failed to search novels:", error);
+    }
+  };
+
   return (
     <div>
-      <NovelsSection novels={novels} />
+      <NovelsSection novels={novels} onSearch={handleSearch} />
     </div>
   );
 }
